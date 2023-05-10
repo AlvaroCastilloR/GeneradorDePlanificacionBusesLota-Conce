@@ -47,23 +47,24 @@ void orden_aleatorio(vector<string>& vector) {
     mt19937 g(rd());
     shuffle(vector.begin(), vector.end(), g); //Funcion que desordena un vector con la planificacion diaria
 }
-vector<int> definirDigitosSiguientes(vector<int>& vectorDiaAnterior){
-	vector<int> vec1;
-	bool flag = false;
-	for (int i = 0; i < 10; ++i){
-		for (int j = 0; j < vectorDiaAnterior.size(); ++j){
-			if (i == vectorDiaAnterior.at(j)){
-				flag=true;
-				break;
-			}
-		}
-		if (!flag){
-			vec1.push_back(i);
-			flag = true;
-		}
-		flag = false;
-	}
-	return vec1;
+vector<int> definirDigitosSiguientes(vector<int>& vectorDiaAnterior, int tam) {
+    vector<int> vec1;
+
+    // Si el vectorDiaAnterior está vacío, comienza desde 0. 
+    // De lo contrario, comienza desde el número que sigue al último número en vectorDiaAnterior.
+    int start = vectorDiaAnterior.empty() ? 0 : (vectorDiaAnterior.back() + 1) % 10;
+    
+    while(vec1.size() < tam) {
+        vec1.push_back(start);
+        start = (start + 1) % 10;  // Asegura que los números estén en el rango de 0 a 9.
+    }
+
+    for(int i = 0; i < vec1.size(); ++i){
+        cout<<vec1.at(i)<<" ";
+    }
+    cout<<endl;
+
+    return vec1;
 }
 vector<string> obtenerListado( vector<int>& digitos,vector<string>& patentes){ 
 	unordered_set<string> result_set; // usamos unordered_set para chequear duplicados
@@ -725,7 +726,7 @@ int main() { //-lxlsxwriter
 		unDigitoXDia.push_back(vector);
 	}
    	imprimirEntrada(cantidadDeDigitosXDia,dias,cantDias);
-   	digitosAnteriores = definirDigitosSiguientes(digitosPrimerDia); // ingresar dias anteriores a un vector
+   	digitosAnteriores = definirDigitosSiguientes(digitosPrimerDia,cantidadDeDigitosXDia.at(0)); // ingresar dias anteriores a un vector
 	digitosNuevoDia = digitosAnteriores; //los anteriore0s que no salieron sorteados
 	int x = cantidadDeDigitosXDia.at(0);
 	int y = digitosAnteriores.size();
@@ -756,7 +757,7 @@ int main() { //-lxlsxwriter
 	digitosNuevoDia.clear();
 	int lim = 1;
 	for (int i = 1; i < cantDias; ++i){
-		digitosAnteriores = definirDigitosSiguientes(digitosXDiasSorteados.at(i-1)); // ingresar dias anteriores a un vector
+		digitosAnteriores = definirDigitosSiguientes(digitosXDiasSorteados.at(i-1),cantidadDeDigitosXDia.at(lim)); // ingresar dias anteriores a un vector
 		digitosNuevoDia = digitosAnteriores; //los anteriore0s que no salieron sorteados
 		int a =cantidadDeDigitosXDia.at(lim);
 		lim++;
