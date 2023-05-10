@@ -59,10 +59,10 @@ vector<int> definirDigitosSiguientes(vector<int>& vectorDiaAnterior, int tam) {
         start = (start + 1) % 10;  // Asegura que los números estén en el rango de 0 a 9.
     }
 
-    for(int i = 0; i < vec1.size(); ++i){
+    /*for(int i = 0; i < vec1.size(); ++i){
         cout<<vec1.at(i)<<" ";
     }
-    cout<<endl;
+    cout<<endl;*/
 
     return vec1;
 }
@@ -284,7 +284,6 @@ void imprimirEntrada(vector<int>& cantidadDeDigitosXDia,vector<string>& dias,int
     cout<<"Entrada leida correctamente"<<endl;
     cout<<endl;
 }
-
 void imprimirSorteo(vector<vector<int>>& digitosXDiasSorteados){
 	cout<<"Sorteo obtenido"<<endl;
 	for (int i = 0; i < digitosXDiasSorteados.size(); ++i){
@@ -326,7 +325,7 @@ vector<vector<string>> cambiarFoliosANombres(vector<vector<string>> folios) {
     // Devolvemos la matriz modificada
     return folios;
 }
-void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>& planificacionObtenida,vector<vector<string>>&  planificacionObtenidaConFolios,vector<vector<string>>& planificacionObtenidaConNinternos,vector<vector<int>>& digitosXDiasSorteados){
+void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>& planificacionObtenida,vector<vector<string>>&  planificacionObtenidaConFolios,vector<vector<string>>& planificacionObtenidaConNinternos,vector<vector<int>>& digitosXDiasSorteados,int dia,int mes,int ano){
 	vector<string> nombreArchivos;
 	for (int i = 0; i < cantDias; ++i){
 		string aux = "Dia_";
@@ -386,9 +385,14 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
 	int count3 = 2;
 	int count4 = 3;
 	tm fecha;
-    fecha.tm_year = 123; // Años desde 1900, por lo que 123 corresponde a 2023
-    fecha.tm_mon = 4;    // Abril, pero empezando desde 0
-    fecha.tm_mday = 15;  // Día del mes
+    fecha.tm_year = ano -1900; // Años desde 1900, por lo que 123 corresponde a 2023
+    fecha.tm_mon = mes-1;    // Abril, pero empezando desde 0
+    fecha.tm_mday = dia;  // Día del mes
+    fecha.tm_hour = 0;    // Asegurándose de que la hora sea 0, para evitar interferencias.
+    fecha.tm_min = 0;     // Asegurándose de que los minutos sean 0, para evitar interferencias.
+    fecha.tm_sec = 0;     // Asegurándose de que los segundos sean 0, para evitar interferencias.
+    fecha.tm_isdst = -1;  // Dejar que mktime detecte si el horario de verano está en vigor.
+
 	for (int i = 0; i < cantDias; ++i){
 		string col1 = "Patentes";
 		string col2 = "Linea";	
@@ -409,7 +413,7 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
     	worksheet_write_string(worksheet, fila, i+count, numero_str.c_str(), NULL);
     	worksheet_write_string(worksheet, fila, i+count+3, fecha_string.c_str(), NULL);
     	fecha.tm_mday += 1;
-
+    	 mktime(&fecha); 
     	string name = aux + numero_str;
     	string name2 = aux3 + numero_str;
     	string name6 = aux6 + numero_str;
@@ -574,7 +578,6 @@ unordered_map<string, vector<string>>  separarPatentesPorFolios(unordered_map<st
     
     return folios_con_patentes;
 }
-
 vector<string> obtenerNombresExcels(unordered_map<string, vector<string>> folios_con_patentes) {
     vector<string> nombres_excels;
     
@@ -610,6 +613,7 @@ int main() { //-lxlsxwriter
 	int max = 9;
 	int cantDias; // cantidad de dias a planificar
 	vector<string> patentes;
+	vector<int> fechadiayear;
 	vector<int> cantidadDeDigitosXDia;
 	vector<string> folios;
 	vector<string> nMaquinas;
@@ -663,23 +667,25 @@ int main() { //-lxlsxwriter
     // Llenar el vector con números del 0 al 9 sin repetir
     int contador = 0;
     int digult = 0;
+    int cantUltDia = 0;
     do {
         cout << "Ingrese la cantidad de digitos del ultimo dia: ";
-        cin >> digult;
+        cin >> cantUltDia;
 
         if (cin.fail()) { // Si el usuario ingresa un valor no numérico
             cin.clear(); // Limpiar el estado de error de cin
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignorar todo el input hasta el siguiente salto de línea
             cout << "Error: ingresa un número válido." << endl;
         }
-        else if (numero < 1 || numero > 30) { // Si el usuario ingresa un número fuera del rango
-            cout << "Error: el número debe estar entre 1 y 30." << endl;
+        else if (cantUltDia < 1 || cantUltDia > 9) { // Si el usuario ingresa un número fuera del rango
+            cout << "Error: el número debe estar entre 1 y 9." << endl;
         }
-    } while (numero < 0 || numero > 9 || cin.fail());
+    } while (cantUltDia < 1 || cantUltDia > 9 || cin.fail());
+    
     cout<<endl;
     cout<<"Ingrese los numeros del 0 al 9 correspondiente a los digitos del ultimo dia: "<<endl;
     
-    while (contador < digult) {
+    while (contador < cantUltDia) {
         int numero_ingresado;
         cout << "Ingrese Digito"<<contador+1<<": ";
         cin >> numero_ingresado;
@@ -699,8 +705,50 @@ int main() { //-lxlsxwriter
         }
     }
     cout<<endl;
+    int dia, mes, ano;
+    do {
+        cout << "Ingresa un día entre 1 y 31: ";
+        cin >> dia;
+
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Error: ingresa un número válido." << endl;
+        }
+        else if (dia < 1 || dia > 31) {
+            cout << "Error: el día debe estar entre 1 y 31." << endl;
+        }
+    } while (dia < 1 || dia > 31 || cin.fail());
+
+    do {
+        cout << "Ingresa un mes entre 1 y 12: ";
+        cin >> mes;
+
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Error: ingresa un número válido." << endl;
+        }
+        else if (mes < 1 || mes > 12) {
+            cout << "Error: el mes debe estar entre 1 y 12." << endl;
+        }
+    } while (mes < 1 || mes > 12 || cin.fail());
+     do {
+        cout << "Ingresa un año mayor o igual a 1900: ";
+        cin >> ano;
+
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Error: ingresa un número válido." << endl;
+        }
+        else if (ano < 1900) {
+            cout << "Error: el año debe ser mayor o igual a 1900." << endl;
+        }
+    } while (ano < 1900 || cin.fail());
     // Imprimir los números ingresados
-    cout << "El usuario ingreso el numero " << numero << " y los siguientes numeros:\n";
+    
+    cout << "El usuario SIMULARA " << numero << " dias y el ultimo dia hubo los siguientes numeros:\n";
     for (auto const& numero : numeros) {
         cout << numero << " ";
     }
@@ -790,7 +838,7 @@ int main() { //-lxlsxwriter
 	}
 	mapaPatentes.erase("");
 	mapaFrecXdigitoPat.erase("");
-	guardarPlanificacionObtenidaEnArchivo(cantDias,planificacionObtenida,planificacionObtenidaConFolios,planificacionObtenidaConNinternos,digitosXDiasSorteados);
+	guardarPlanificacionObtenidaEnArchivo(cantDias,planificacionObtenida,planificacionObtenidaConFolios,planificacionObtenidaConNinternos,digitosXDiasSorteados,dia,mes,ano);
 	guardar_map_en_archivo(mapaPatentes, "ResultadosObtenidos.txt","FrecuenciaBusesObtenida.txt");
     unordered_map<string, vector<string>> folios_con_patentes = separarPatentesPorFolios(mapaFolios);
     vector<vector<string>> patentes_separadas;
