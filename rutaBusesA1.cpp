@@ -386,8 +386,8 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
 	int count4 = 3;
 	tm fecha;
     fecha.tm_year = 123; // Años desde 1900, por lo que 123 corresponde a 2023
-    fecha.tm_mon = 3;    // Abril, pero empezando desde 0
-    fecha.tm_mday = 17;  // Día del mes
+    fecha.tm_mon = 4;    // Abril, pero empezando desde 0
+    fecha.tm_mday = 15;  // Día del mes
 	for (int i = 0; i < cantDias; ++i){
 		string col1 = "Patentes";
 		string col2 = "Linea";	
@@ -468,14 +468,14 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
 		bool flag2 = true;
 	    while (getline(inFile6, nombre)) {
 	        worksheet_write_string(worksheet, 2+fila, i+count3, nombre.c_str(), NULL);
-	        if (horario_actual->tm_hour == 12 && horario_actual->tm_min == 0) {
+	        /*if (horario_actual->tm_hour == 12 && horario_actual->tm_min == 0) {
 		        horario_actual->tm_hour = 7;
 		        horario_actual->tm_min = 5;
 		        flag2 = false;
 		    }
 	        if(flag2) horario_actual->tm_min += 5; // Sumarle 5 minutos al horario actual
-			else horario_actual->tm_min += 15;
-
+			else horario_actual->tm_min += 15;*/
+	        horario_actual->tm_min += 5;
 			time_t tiempo_actualizado = mktime(horario_actual);
 			strftime(buffer, sizeof(buffer), "%H:%M:%S", horario_actual); // Formatea la hora en "HH:MM:SS"
 			horarios.push_back(buffer);
@@ -661,10 +661,24 @@ int main() { //-lxlsxwriter
 
     // Llenar el vector con números del 0 al 9 sin repetir
     int contador = 0;
+    int digult = 0;
+    do {
+        cout << "Ingrese la cantidad de digitos del ultimo dia: ";
+        cin >> digult;
+
+        if (cin.fail()) { // Si el usuario ingresa un valor no numérico
+            cin.clear(); // Limpiar el estado de error de cin
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignorar todo el input hasta el siguiente salto de línea
+            cout << "Error: ingresa un número válido." << endl;
+        }
+        else if (numero < 1 || numero > 30) { // Si el usuario ingresa un número fuera del rango
+            cout << "Error: el número debe estar entre 1 y 30." << endl;
+        }
+    } while (numero < 0 || numero > 9 || cin.fail());
     cout<<endl;
-    cout<<"Ingrese los numeros del 0 al 9 correspondiente a los digitos del ultimo dia domingo: "<<endl;
+    cout<<"Ingrese los numeros del 0 al 9 correspondiente a los digitos del ultimo dia: "<<endl;
     
-    while (contador < 5) {
+    while (contador < digult) {
         int numero_ingresado;
         cout << "Ingrese Digito"<<contador+1<<": ";
         cin >> numero_ingresado;
