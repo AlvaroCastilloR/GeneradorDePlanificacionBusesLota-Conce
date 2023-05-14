@@ -385,7 +385,7 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
 	int count3 = 2;
 	int count4 = 3;
 	tm fecha;
-    fecha.tm_year = ano -1900; // Años desde 1900, por lo que 123 corresponde a 2023
+    fecha.tm_year = ano - 1900; // Años desde 1900, por lo que 123 corresponde a 2023
     fecha.tm_mon = mes-1;    // Abril, pero empezando desde 0
     fecha.tm_mday = dia;  // Día del mes
     fecha.tm_hour = 0;    // Asegurándose de que la hora sea 0, para evitar interferencias.
@@ -471,6 +471,12 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
 		strftime(buffer, sizeof(buffer), "%H:%M:%S", horario_actual); // Formatea la hora en "HH:MM:SS"
 		int flag = 0;
 		bool flag2 = true;
+		bool flagNum6 = true;
+		int countNum6 = 0;
+		bool flagNum5 = false;
+		int countNum5 = 0;
+		bool flagNum4 = false;
+		int countNum4 = 0;
 	    while (getline(inFile6, nombre)) {
 	        worksheet_write_string(worksheet, 2+fila, i+count3, nombre.c_str(), NULL);
 	        /*if (horario_actual->tm_hour == 12 && horario_actual->tm_min == 0) {
@@ -480,7 +486,48 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
 		    }
 	        if(flag2) horario_actual->tm_min += 5; // Sumarle 5 minutos al horario actual
 			else horario_actual->tm_min += 15;*/
-	        horario_actual->tm_min += 5;
+	        if(i%6 == 0 && i!=0){
+	        		if(flagNum6){
+		        	 horario_actual->tm_min += 10;
+		        	 countNum6++;
+		        	 if(countNum6 == 6){
+		        	 	flagNum5 = true;
+		        	 	flagNum6 = false;
+		        	 }
+		        }
+		        else {
+		        	if(flagNum5){
+		        	 horario_actual->tm_min += 7;
+		        	 countNum5++;
+		        	 	if(countNum5 == 10){
+		        	 	flagNum4 = true;
+		        	 	flagNum5 = false;
+		        		 }
+		        	}
+		        	else horario_actual->tm_min += 5;
+		    	}
+	        }else{
+		        	if(flagNum6){
+		        	 horario_actual->tm_min += 6;
+		        	 countNum6++;
+		        	 if(countNum6 == 5){
+		        	 	flagNum5 = true;
+		        	 	flagNum6 = false;
+		        	 }
+		        }
+		        else {
+		        	if(flagNum5){
+		        	 horario_actual->tm_min += 5;
+		        	 countNum5++;
+		        	 	if(countNum5 == 6){
+		        	 	flagNum4 = true;
+		        	 	flagNum5 = false;
+		        		 }
+		        	}
+		        	else horario_actual->tm_min += 4;
+		    	}
+	        }
+	   
 			time_t tiempo_actualizado = mktime(horario_actual);
 			strftime(buffer, sizeof(buffer), "%H:%M:%S", horario_actual); // Formatea la hora en "HH:MM:SS"
 			horarios.push_back(buffer);
