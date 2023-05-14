@@ -486,7 +486,7 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
 		    }
 	        if(flag2) horario_actual->tm_min += 5; // Sumarle 5 minutos al horario actual
 			else horario_actual->tm_min += 15;*/
-	        if(i%6 == 0 && i!=0){
+	        if((i+1)%7 == 0 && i!=0){
 	        		if(flagNum6){
 		        	 horario_actual->tm_min += 10;
 		        	 countNum6++;
