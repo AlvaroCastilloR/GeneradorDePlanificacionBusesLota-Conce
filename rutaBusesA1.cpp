@@ -385,6 +385,8 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
 	int count3 = 2;
 	int count4 = 3;
 	tm fecha;
+	memset(&fecha,0,sizeof(fecha));
+    
     fecha.tm_year = ano - 1900; // Años desde 1900, por lo que 123 corresponde a 2023
     fecha.tm_mon = mes-1;    // 
     fecha.tm_mday = dia;  // Día del mes
@@ -392,6 +394,7 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
     fecha.tm_min = 0;     // Asegurándose de que los minutos sean 0, para evitar interferencias.
     fecha.tm_sec = 0;     // Asegurándose de que los segundos sean 0, para evitar interferencias.
     fecha.tm_isdst = -1;  // Dejar que mktime detecte si el horario de verano está en vigor.
+	mktime(&fecha);
 
 	for (int i = 0; i < cantDias; ++i){
 		string col1 = "Patentes";
@@ -412,9 +415,6 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
     	string fecha_string(buffer);
     	worksheet_write_string(worksheet, fila, i+count, numero_str.c_str(), NULL);
     	worksheet_write_string(worksheet, fila, i+count+3, fecha_string.c_str(), NULL);
-    	//fecha.tm_mday += 1;
-    	//fecha.tm_wday += 1;
-    	mktime(&fecha);
     	string name = aux + numero_str;
     	string name2 = aux3 + numero_str;
     	string name6 = aux6 + numero_str;
@@ -481,7 +481,7 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
 	    while (getline(inFile6, nombre)) {
 	        worksheet_write_string(worksheet, 2+fila, i+count3, nombre.c_str(), NULL);
 	        //(i+1)%7 == 0 && i!=0
-	        if(fecha.tm_wday == 6){
+	        if(fecha.tm_wday == 0){
 	        		if(flagNum6){
 		        	 horario_actual->tm_min += 10;
 		        	 countNum6++;
@@ -531,6 +531,9 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
 	        flag++;
 	        fila++;
 	    }
+	    fecha.tm_mday += 1;
+    	cout<<fecha.tm_wday<<endl;
+    	mktime(&fecha);
 	    count3 = count3 + 4;
 		count4 = count4 + 4;
 		inFile6.close();
