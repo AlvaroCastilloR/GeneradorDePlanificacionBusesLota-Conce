@@ -349,7 +349,7 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
     	stringstream ss;
     	ss << numero;
     	string numero_str = ss.str();
-    	string name = aux + numero_str;
+    	string name = aux + numero_str; 
 		name = name + aux2;
 		nombreArchivos5.push_back(name);
 	}
@@ -519,7 +519,7 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
 		        	 	flagNum5 = false;
 		        		 }
 		        	}
-		        	else horario_actual->tm_min += 3;
+		        	else horario_actual->tm_min += 4;
 		    	}
 	        }
 	   
