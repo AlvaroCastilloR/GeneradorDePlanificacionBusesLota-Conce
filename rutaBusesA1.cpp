@@ -412,8 +412,8 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
     	string fecha_string(buffer);
     	worksheet_write_string(worksheet, fila, i+count, numero_str.c_str(), NULL);
     	worksheet_write_string(worksheet, fila, i+count+3, fecha_string.c_str(), NULL);
-    	fecha.tm_mday += 1;
-    	fecha.tm_wday += 1;
+    	//fecha.tm_mday += 1;
+    	//fecha.tm_wday += 1;
     	mktime(&fecha);
     	string name = aux + numero_str;
     	string name2 = aux3 + numero_str;
