@@ -386,7 +386,7 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
 	int count4 = 3;
 	tm fecha;
     fecha.tm_year = ano - 1900; // Años desde 1900, por lo que 123 corresponde a 2023
-    fecha.tm_mon = mes-1;    // Abril, pero empezando desde 0
+    fecha.tm_mon = mes-1;    // 
     fecha.tm_mday = dia;  // Día del mes
     fecha.tm_hour = 0;    // Asegurándose de que la hora sea 0, para evitar interferencias.
     fecha.tm_min = 0;     // Asegurándose de que los minutos sean 0, para evitar interferencias.
@@ -413,7 +413,8 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
     	worksheet_write_string(worksheet, fila, i+count, numero_str.c_str(), NULL);
     	worksheet_write_string(worksheet, fila, i+count+3, fecha_string.c_str(), NULL);
     	fecha.tm_mday += 1;
-    	 mktime(&fecha); 
+    	fecha.tm_wday += 1;
+    	mktime(&fecha);
     	string name = aux + numero_str;
     	string name2 = aux3 + numero_str;
     	string name6 = aux6 + numero_str;
@@ -479,14 +480,8 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
 		int countNum4 = 0;
 	    while (getline(inFile6, nombre)) {
 	        worksheet_write_string(worksheet, 2+fila, i+count3, nombre.c_str(), NULL);
-	        /*if (horario_actual->tm_hour == 12 && horario_actual->tm_min == 0) {
-		        horario_actual->tm_hour = 7;
-		        horario_actual->tm_min = 5;
-		        flag2 = false;
-		    }
-	        if(flag2) horario_actual->tm_min += 5; // Sumarle 5 minutos al horario actual
-			else horario_actual->tm_min += 15;*/
-	        if((i+1)%7 == 0 && i!=0){
+	        //(i+1)%7 == 0 && i!=0
+	        if(fecha.tm_wday == 6){
 	        		if(flagNum6){
 		        	 horario_actual->tm_min += 10;
 		        	 countNum6++;
@@ -524,7 +519,7 @@ void guardarPlanificacionObtenidaEnArchivo(int& cantDias, vector<vector<string>>
 		        	 	flagNum5 = false;
 		        		 }
 		        	}
-		        	else horario_actual->tm_min += 4;
+		        	else horario_actual->tm_min += 3;
 		    	}
 	        }
 	   
