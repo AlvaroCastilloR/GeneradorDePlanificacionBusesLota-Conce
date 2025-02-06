@@ -1,5 +1,5 @@
 # PlanificacionMensual
-
+sudo apt install libxlsxwriter-dev // biblioteca necesaria
 g++ rutaBusesA1.cpp -lxlsxwriter //para compilar.
 ./a.out //para ejecutar.
 
