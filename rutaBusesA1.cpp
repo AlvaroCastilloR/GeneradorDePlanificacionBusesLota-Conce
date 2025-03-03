@@ -42,10 +42,20 @@ int escogoRandom(int& min,int& max, vector<int>& digitosRandom){
 	}while(fstop);
     return digitoAleatorio;
 }
+
+
 void orden_aleatorio(vector<string>& vector) {
-    random_device rd;
-    mt19937 g(rd());
-    shuffle(vector.begin(), vector.end(), g); //Funcion que desordena un vector con la planificacion diaria
+    static bool semilla_inicializada = false;
+    if (!semilla_inicializada) {
+        srand(time(nullptr));  // Inicializa la semilla solo una vez
+        semilla_inicializada = true;
+    }
+    
+    int n = vector.size();
+    for (int i = n - 1; i > 0; --i) {
+        int j = rand() % (i + 1);  // Índice aleatorio entre 0 e i
+        swap(vector[i], vector[j]);  // Intercambia elementos
+    }
 }
 vector<int> definirDigitosSiguientes(vector<int>& vectorDiaAnterior, int tam) {
     vector<int> vec1;
